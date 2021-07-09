@@ -24,12 +24,11 @@ class ClientEngine {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     this.trigger('render', timestamp);
-    // this.initNextFrame();
+    this.initNextFrame();
   }
 
   initNextFrame() {
-    this.loop();
-    // window.requestAnimationFrame(this.loop);
+    window.requestAnimationFrame(this.loop);
   }
 
   loadSprites(spriteGroup) {
