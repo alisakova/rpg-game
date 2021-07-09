@@ -19,7 +19,7 @@ class ClientWorld {
           x: x * 30,
           y: y * 30,
           width: 30,
-          height: 36,
+          height: 30,
         });
       });
     });
