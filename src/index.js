@@ -1,5 +1,6 @@
 import './index.scss';
 import GirlWalk from './assets/female.png';
+import ClientGame from './client/ClientGame';
 
 const getPressedKey = (event) => {
   if (event.key === 'Down' || event.key === 'ArrowDown') {
@@ -97,39 +98,48 @@ const drawBackground = () => {
   });
 };
 
+const walk = (timeStamp) => {
+  if (pressedKeys.bottomPressed) {
+    positionY += positionY + shift === limitPositions.rightBottom ? 0 : shift;
+  }
+  if (pressedKeys.upPressed) {
+    positionY -= positionY - shift === limitPositions.leftTop ? 0 : shift;
+  }
+  if (pressedKeys.leftPressed) {
+    positionX -= positionX - shift === limitPositions.leftTop ? 0 : shift;
+  }
+  if (pressedKeys.rightPressed) {
+    positionX += positionX + shift === limitPositions.rightBottom ? 0 : shift;
+  }
+  if (Object.values(pressedKeys).some((value) => value)) {
+    cycle = (cycle + 1) % shots;
+  }
+
+  ctx.fillStyle = '#110950';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  drawBackground();
+  ctx.drawImage(
+    img,
+    cycle * spriteWidth,
+    heroRotate * spriteHeight,
+    spriteWidth,
+    spriteHeight,
+    positionX,
+    positionY,
+    spriteWidth,
+    spriteHeight,
+  );
+
+  window.requestAnimationFrame(walk);
+};
+
 const img = document.createElement('img');
 img.src = GirlWalk;
 
 img.addEventListener('load', () => {
-  setInterval(() => {
-    if (pressedKeys.bottomPressed) {
-      positionY += positionY + shift === limitPositions.rightBottom ? 0 : shift;
-    }
-    if (pressedKeys.upPressed) {
-      positionY -= positionY - shift === limitPositions.leftTop ? 0 : shift;
-    }
-    if (pressedKeys.leftPressed) {
-      positionX -= positionX - shift === limitPositions.leftTop ? 0 : shift;
-    }
-    if (pressedKeys.rightPressed) {
-      positionX += positionX + shift === limitPositions.rightBottom ? 0 : shift;
-    }
-    if (Object.values(pressedKeys).some((value) => value)) {
-      cycle = (cycle + 1) % shots;
-    }
-    ctx.fillStyle = '#110950';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    drawBackground();
-    ctx.drawImage(
-      img,
-      cycle * spriteWidth,
-      heroRotate * spriteHeight,
-      spriteWidth,
-      spriteHeight,
-      positionX,
-      positionY,
-      spriteWidth,
-      spriteHeight,
-    );
-  }, 120);
+  //   window.requestAnimationFrame(walk);
+});
+
+window.addEventListener('load', () => {
+  ClientGame.init({ tagId: 'game' });
 });
