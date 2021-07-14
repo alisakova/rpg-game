@@ -1,4 +1,6 @@
 import EventSourceMixin from '../common/EventSourceMixin';
+import ClientCamera from './ClientCamera';
+import ClientInput from './ClientInput';
 
 class ClientEngine {
   constructor(canvas) {
@@ -8,6 +10,11 @@ class ClientEngine {
       imageLoaders: [],
       sprites: [],
       images: [],
+      camera: new ClientCamera({
+        canvas,
+        engine: this,
+      }),
+      input: new ClientInput(canvas),
     });
 
     this.ctx = canvas.getContext('2d');
@@ -58,13 +65,13 @@ class ClientEngine {
   }
 
   renderSpriteFrame({
-    sprite, frame, x, y, width, height,
+    sprite, frame, x, y, w, h,
   }) {
     const spriteConfig = this.sprites[sprite[0]][sprite[1]];
     const [fx, fy, fw, fh] = spriteConfig.frames[frame];
     const img = this.images[spriteConfig.img];
 
-    this.ctx.drawImage(img, fx, fy, fw, fh, x, y, width, height);
+    this.ctx.drawImage(img, fx, fy, fw, fh, x, y, w, h);
   }
 }
 

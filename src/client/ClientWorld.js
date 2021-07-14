@@ -1,28 +1,63 @@
-class ClientWorld {
+import PositionedObject from '../common/PositionedObject';
+import ClientCell from './ClientCell';
+
+class ClientWorld extends PositionedObject {
   constructor(game, engine, levelConfig) {
+    super();
+
+    const worldHeight = levelConfig.map.length;
+    const worldWidth = levelConfig.map[0].length;
+    const cellSize = engine.canvas.height / levelConfig.camera.height;
+
     Object.assign(this, {
       game,
       engine,
       levelConfig,
-      height: levelConfig.map.length,
-      width: levelConfig.map[0].length,
+      worldHeight,
+      worldWidth,
+      cellWidth: cellSize,
+      cellHeight: cellSize,
+      height: worldHeight * cellSize,
+      width: worldWidth * cellSize,
+      map: [],
     });
   }
 
   init() {
-    const { map } = this.levelConfig;
-    map.forEach((cfgRow, y) => {
-      cfgRow.forEach((cfgCell, x) => {
-        this.engine.renderSpriteFrame({
-          sprite: ['terrain', cfgCell[0]],
-          frame: 0,
-          x: x * 30,
-          y: y * 30,
-          width: 30,
-          height: 30,
+    const {
+      levelConfig,
+      map,
+      worldWidth,
+      worldHeight,
+    } = this;
+
+    for (let row = 0; row < worldHeight; row += 1) {
+      for (let col = 0; col < worldWidth; col += 1) {
+        if (!map[row]) {
+          map[row] = [];
+        }
+
+        map[row][col] = new ClientCell({
+          world: this,
+          cellCol: col,
+          cellRow: row,
+          cellCfg: levelConfig.map[row][col],
         });
-      });
-    });
+      }
+    }
+  }
+
+  render(time) {
+    const { map, worldWidth, worldHeight } = this;
+    for (let row = 0; row < worldHeight; row += 1) {
+      for (let col = 0; col < worldWidth; col += 1) {
+        map[row][col].render(time);
+      }
+    }
+  }
+
+  cellAt(col, row) {
+    return this.map[row] && this.map[row][col];
   }
 }
 
